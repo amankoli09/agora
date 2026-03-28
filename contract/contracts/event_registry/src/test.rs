@@ -4426,3 +4426,20 @@ fn test_register_event_tags_and_banner_cid_coexist() {
     assert_eq!(info.banner_cid.unwrap(), banner);
     assert_eq!(info.tags.unwrap().len(), 2);
 }
+
+// ── VERSION constant ──────────────────────────────────────────────────────────
+
+/// The VERSION constant must equal 1.
+#[test]
+fn test_version_constant_value() {
+    assert_eq!(crate::VERSION, 1u32);
+}
+
+/// The `version()` contract function must return 1.
+#[test]
+fn test_version_fn_returns_1() {
+    let env = Env::default();
+    let contract_id = env.register(EventRegistry, ());
+    let client = EventRegistryClient::new(&env, &contract_id);
+    assert_eq!(client.version(), 1u32);
+}

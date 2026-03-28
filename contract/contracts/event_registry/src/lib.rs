@@ -24,6 +24,8 @@ use crate::types::{SeriesPass, SeriesRegistry};
 
 use crate::error::EventRegistryError;
 
+pub const VERSION: u32 = 1;
+
 const MIN_METADATA_CID_LEN: u32 = 46;
 const MAX_METADATA_CID_LEN: u32 = 100;
 
@@ -1660,6 +1662,11 @@ impl EventRegistry {
     /// Gets all active proposal IDs
     pub fn get_active_proposals(env: Env) -> Vec<u64> {
         storage::get_active_proposals(&env)
+    }
+
+    /// Returns the contract version.
+    pub fn version(_env: Env) -> u32 {
+        VERSION
     }
 }
 
