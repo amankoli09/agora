@@ -237,7 +237,12 @@ impl TicketPaymentContract {
         is_paused(&env)
     }
 
-    /// Sets or clears a dispute for an event. Only callable by admin.
+    /// Returns true if the contract is currently paused.
+    pub fn is_paused(env: Env) -> bool {
+        is_paused(&env)
+    }
+
+    /// Sets or clears a dispute for an event.
     pub fn set_event_dispute(
         env: Env,
         event_id: String,
