@@ -695,8 +695,7 @@ impl EventRegistry {
     /// # Arguments
     /// * `new_admin` - The new administrator address.
     pub fn set_admin(env: Env, new_admin: Address) -> Result<(), EventRegistryError> {
-        let old_admin = storage::get_admin(&env).ok_or(EventRegistryError::NotInitialized)?;
-        old_admin.require_auth();
+        let old_admin = require_admin(&env)?;
 
         validate_address(&env, &new_admin)?;
 
