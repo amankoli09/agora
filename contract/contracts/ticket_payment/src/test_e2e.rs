@@ -1,6 +1,6 @@
 use super::contract::{event_registry, TicketPaymentContract, TicketPaymentContractClient};
 use super::storage::*;
-use super::types::PaymentStatus;
+use super::types::{PaymentStatus, MAX_BPS, TRANSFER_FEE_BPS};
 use crate::error::TicketPaymentError;
 use soroban_sdk::{
     testutils::Address as _, testutils::Ledger, token, Address, Env, String, Symbol,
@@ -49,6 +49,7 @@ impl MockRegistryE2E {
 
         Some(event_registry::EventInfo {
             event_id,
+            name: String::from_str(&env, "Test Event"),
             organizer_address: organizer,
             payment_address,
             platform_fee_percent: 500,
@@ -161,6 +162,7 @@ impl MockRegistryCancelledE2E {
 
         Some(event_registry::EventInfo {
             event_id,
+            name: String::from_str(&env, "Test Event"),
             organizer_address: organizer.clone(),
             payment_address: organizer,
             platform_fee_percent: 500,
@@ -253,6 +255,7 @@ impl MockRegistryWithGoal {
 
         Some(event_registry::EventInfo {
             event_id,
+            name: String::from_str(&env, "Test Event"),
             organizer_address: organizer.clone(),
             payment_address: organizer,
             platform_fee_percent: 500,
@@ -892,6 +895,10 @@ fn test_e2e_ticket_transfer_lifecycle() {
     assert_eq!(payment.status, PaymentStatus::Confirmed);
     assert_eq!(payment.buyer_address, buyer);
 
+    // Account for default transfer fee
+    let expected_fee = (amount * TRANSFER_FEE_BPS as i128) / MAX_BPS as i128;
+    fund_buyer(&env, &usdc_id, &buyer, &client.address, expected_fee);
+
     // Transfer to new owner (no sale price, no transfer fee)
     client.transfer_ticket(&pay_id, &new_owner, &None);
 
@@ -1028,6 +1035,7 @@ impl MockRegistryAuction {
 
         Some(event_registry::EventInfo {
             event_id,
+            name: String::from_str(&env, "Test Event"),
             organizer_address: organizer.clone(),
             payment_address: organizer,
             platform_fee_percent: 500,

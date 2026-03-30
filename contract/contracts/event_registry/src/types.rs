@@ -90,6 +90,8 @@ pub enum EventStatus {
 pub struct EventInfo {
     /// Unique identifier for the event
     pub event_id: String,
+    /// Human-readable name for the event (trimmed of leading/trailing whitespace)
+    pub name: String,
     /// The wallet address of the event organizer
     pub organizer_address: Address,
     /// The address where payments for this event should be routed
@@ -158,6 +160,8 @@ pub struct PaymentInfo {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct EventRegistrationArgs {
     pub event_id: String,
+    /// Human-readable name for the event. Leading/trailing whitespace will be trimmed on registration.
+    pub name: String,
     pub organizer_address: Address,
     pub payment_address: Address,
     pub metadata_cid: String,
@@ -317,6 +321,12 @@ pub enum DataKey {
     PromoExpiry,
     /// Mapping of event_id to EventReceipt (Persistent) for archived events
     EventReceipt(String),
+    /// Individual entry for an organizer's archived event receipt (Persistent)
+    OrganizerReceipt(Address, String),
+    /// Sharded mapping of organizer address to archived event receipt ids (Persistent)
+    OrganizerReceiptShard(Address, u32),
+    /// Total number of archived event receipts for an organizer (Persistent)
+    OrganizerReceiptCount(Address),
     /// Counter for proposal IDs
     ProposalCounter,
     /// Mapping of proposal_id to Proposal
@@ -350,4 +360,10 @@ pub enum DataKey {
     StakersList,
     /// Mapping of token address to whitelist status (Persistent)
     TokenWhitelist(Address),
+    /// Global counter of all events ever registered on the platform
+    GlobalEventCount,
+    /// Global counter of currently active events
+    GlobalActiveEventCount,
+    /// Global counter of all tickets sold across all events
+    GlobalTicketsSold,
 }
